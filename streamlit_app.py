@@ -4,10 +4,104 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
+import io
+import matplotlib.ticker as mticker
 
 # ==============================================================================
 # CONFIGURACIÓN GENERAL DE LA APLICACIÓN (ETAPA 8 - DESPLIEGUE EN STREAMLIT)
 # ==============================================================================
+ROSA = "#F6B3D0"
+CIELO = "#9CBDEB"
+TINTA = "#16121F"
+FUCSIA = "#E8336D"
+CAPAS = ["#F9D3E4", "#F2A3C6", "#E97BAE"]
+
+
+def grafico_mercado(precios_m2, mediana_m2, precio_m2_est, distrito):
+    """Histograma del precio por m² del distrito con estilo de afiche."""
+    precios_m2 = np.asarray(precios_m2, dtype=float)
+    fig, ax = plt.subplots(figsize=(7.2, 4.6), dpi=110)
+    fig.patch.set_facecolor(ROSA)
+    ax.set_facecolor(CIELO)
+    for lado in ax.spines.values():
+        lado.set_visible(False)
+
+    conteos, bordes = np.histogram(precios_m2, bins=16)
+    ancho = (bordes[1] - bordes[0]) * 0.86
+    centros = (bordes[:-1] + bordes[1:]) / 2
+    paso = (bordes[1] - bordes[0]) * 0.11
+    alto_max = max(conteos.max(), 1)
+    # capas desplazadas en tonos rosa, como el efecto de sombra del afiche
+    for k, color in reversed(list(enumerate(CAPAS, start=1))):
+        ax.bar(centros + paso * k, conteos + alto_max * 0.025 * k, width=ancho,
+               bottom=0, color=color, zorder=2, linewidth=0)
+    ax.bar(centros, conteos, width=ancho, color="white", edgecolor=TINTA,
+           linewidth=1.4, zorder=3)
+
+    techo = alto_max * 1.55
+    ax.set_ylim(0, techo)
+    bin_w = bordes[1] - bordes[0]
+    x_min = min(bordes[0], precio_m2_est) - bin_w
+    x_max = max(bordes[-1], precio_m2_est) + bin_w * 1.6
+    ax.set_xlim(x_min, x_max)
+    ax.yaxis.grid(True, color="white", alpha=0.45, linewidth=1)
+    ax.set_axisbelow(True)
+    ax.tick_params(length=0, labelsize=9.5, colors=TINTA)
+    ax.xaxis.set_major_formatter(mticker.FuncFormatter(lambda v, p: f"${v:,.0f}"))
+    ax.yaxis.set_major_locator(mticker.MaxNLocator(integer=True, nbins=5))
+    ax.set_xlabel("Precio por m² (USD)", fontsize=10, fontweight="bold", color=TINTA, labelpad=6)
+    ax.set_ylabel("Avisos", fontsize=10, fontweight="bold", color=TINTA, labelpad=6)
+
+    # estrellas decorativas
+    for x, y, s in [(0.05, 0.86, 260), (0.10, 0.74, 110), (0.95, 0.60, 180), (0.91, 0.47, 80)]:
+        ax.scatter(x, y, marker="*", s=s, color="white", transform=ax.transAxes, zorder=1, linewidths=0)
+
+    # mediana del distrito
+    ax.axvline(mediana_m2, color=TINTA, linestyle=(0, (5, 3)), linewidth=1.8, zorder=4)
+    # tu departamento
+    ax.axvline(precio_m2_est, color=FUCSIA, linewidth=4, zorder=5, solid_capstyle="butt")
+
+    pos = (precio_m2_est - x_min) / (x_max - x_min)
+    if pos > 0.62:
+        depa_izq = True
+    elif pos < 0.38:
+        depa_izq = False
+    else:
+        depa_izq = precio_m2_est <= mediana_m2
+    y_tag = alto_max * 1.36
+    ax.text(precio_m2_est, y_tag, f"  ¡TU DEPA!  ${precio_m2_est:,.0f}/m²  ",
+            ha="right" if depa_izq else "left", va="center", fontsize=10.5, fontweight="heavy",
+            color="white", zorder=6,
+            bbox=dict(boxstyle="round,pad=0.45,rounding_size=0.8", fc=FUCSIA, ec=TINTA, lw=1.6))
+    ax.text(mediana_m2, alto_max * 1.14, f"  mediana ${mediana_m2:,.0f}/m²  ",
+            ha="left" if depa_izq else "right", va="center", fontsize=9, fontweight="bold",
+            color=TINTA, zorder=6,
+            bbox=dict(boxstyle="round,pad=0.35,rounding_size=0.8", fc="white", ec=TINTA, lw=1.2))
+
+    fig.text(0.035, 0.955, f"¿Dónde cae tu depa en {distrito}?", fontsize=15.5,
+             fontweight="heavy", color=TINTA, ha="left", va="top")
+    fig.text(0.035, 0.885, f"Precio por m² de {len(precios_m2)} avisos publicados en Urbania",
+             fontsize=9.5, color=TINTA, ha="left", va="top")
+    # trazos tipo "rayitos" del afiche
+    for (x0, y0, x1, y1) in [(0.93, 0.97, 0.985, 0.90), (0.955, 0.985, 0.99, 0.94), (0.90, 0.955, 0.965, 0.87)]:
+        fig.add_artist(plt.Line2D([x0, x1], [y0, y1], color="white", lw=2.4, solid_capstyle="round",
+                                  transform=fig.transFigure))
+    fig.subplots_adjust(left=0.10, right=0.97, top=0.80, bottom=0.14)
+    return fig
+
+
+def figura_a_png(fig, dpi=200):
+    buf = io.BytesIO()
+    fig.savefig(buf, format="png", dpi=dpi, facecolor=fig.get_facecolor())
+    plt.close(fig)
+    return buf.getvalue()
+
+
+@st.dialog("Tu depa frente al mercado del distrito", width="large")
+def ver_grafico_grande(png):
+    st.image(png)
+
+
 st.set_page_config(
     page_title="Tasador Inteligente - Lima Metropolitana",
     page_icon="🏙️",
@@ -253,7 +347,7 @@ with tab1:
                 f"{pct_violentos:.2f}%",
             ],
         })
-        st.dataframe(sec_df, use_container_width=True, hide_index=True)
+        st.dataframe(sec_df, width="stretch", hide_index=True)
 
         # Comparativa rápida contra promedio metropolitano
         prom_tasa = df_dim["Tasa_Delitos_Patrimonio_10k"].mean()
@@ -272,16 +366,11 @@ with tab1:
                 mediana_m2 = df_dist_mkt["Precio_m2_USD"].median()
                 dif_pct = ((precio_m2_est - mediana_m2) / mediana_m2) * 100
 
-                fig, ax = plt.subplots(figsize=(6.2, 3.6))
-                ax.hist(df_dist_mkt["Precio_m2_USD"], bins=18, color="#5b9bd5", alpha=0.75, edgecolor="white")
-                ax.axvline(mediana_m2, color="#1f4e79", linestyle="--", linewidth=1.8, label=f"Mediana distrito: ${mediana_m2:,.0f}/m²")
-                ax.axvline(precio_m2_est, color="#c0392b", linestyle="-", linewidth=2.2, label=f"Tu inmueble: ${precio_m2_est:,.0f}/m²")
-                ax.set_title(f"Distribución de $/m² en {distrito_sel} (n={len(df_dist_mkt)} avisos)")
-                ax.set_xlabel("USD / m²")
-                ax.set_ylabel("Frecuencia")
-                ax.legend(fontsize=8.5)
-                plt.tight_layout()
-                st.pyplot(fig)
+                png_hist = figura_a_png(grafico_mercado(
+                    df_dist_mkt["Precio_m2_USD"], mediana_m2, precio_m2_est, distrito_sel))
+                st.image(png_hist, width=380)
+                if st.button("🔍 Ver gráfico en grande", key="zoom_hist"):
+                    ver_grafico_grande(png_hist)
 
                 st.caption(
                     f"Tu tasación unitaria se ubica **{dif_pct:+.1f}%** respecto a la mediana "
@@ -332,7 +421,7 @@ with tab2:
             "Distrito", "Poblacion_INEI", "Total_Delitos", "Delitos_Patrimonio",
             "Tasa_Delitos_Patrimonio_10k", "Indice_Peligrosidad", "Pct_Delitos_Violentos"
         ]],
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
     )
 
@@ -350,7 +439,7 @@ with tab3:
         st.dataframe(
             df_ablacion[["Escenario", "Modelo", "R2_media", "R2_std", "RMSE_media", "MAE_media", "MAPE_media"]]
             .sort_values(["Escenario", "RMSE_media"]),
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
         )
 
