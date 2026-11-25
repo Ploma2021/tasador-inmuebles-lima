@@ -356,14 +356,29 @@ with tab3:
 
         pivot_r2 = df_ablacion.pivot(index="Modelo", columns="Escenario", values="R2_media")
         pivot_std = df_ablacion.pivot(index="Modelo", columns="Escenario", values="R2_std")
+
+        # Los modelos con R² medio negativo (inestables entre particiones) se muestran solo en la tabla
+        modelos_graf = pivot_r2[(pivot_r2 > 0).all(axis=1)].index
+        modelos_omitidos = [m for m in pivot_r2.index if m not in modelos_graf]
+        pivot_r2 = pivot_r2.loc[modelos_graf].sort_values(pivot_r2.columns[-1], ascending=False)
+        pivot_std = pivot_std.loc[pivot_r2.index]
+
         fig3, ax3 = plt.subplots(figsize=(9, 4.2))
         pivot_r2.plot(kind="bar", yerr=pivot_std, ax=ax3, color=["#5b9bd5", "#1f4e79"], capsize=3)
+        ax3.set_ylim(0, 1.15)
         ax3.set_title("R² medio en distritos no vistos — Solo físicas vs. Físicas + criminalidad")
         ax3.set_ylabel("R² (media ± desv. estándar)")
         ax3.set_xlabel("")
-        plt.xticks(rotation=15)
+        ax3.legend(["A: solo físicas", "B: físicas + criminalidad"], loc="upper center", ncol=2, fontsize=8.5, frameon=False)
+        plt.xticks(rotation=0)
         plt.tight_layout()
         st.pyplot(fig3)
+
+        if modelos_omitidos:
+            st.caption(
+                f"Se omite del gráfico: {', '.join(modelos_omitidos)}. Su R² medio es negativo y varía mucho entre "
+                f"particiones (ver tabla); incluirlo ampliaría el eje y ocultaría las diferencias entre los demás modelos."
+            )
     else:
         st.info("No se encontró `resultados_ablacion.csv` en `modelos_exportados/`.")
 
