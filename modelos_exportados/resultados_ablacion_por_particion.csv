@@ -1,0 +1,51 @@
+﻿Escenario,Modelo,Fold,MAE_USD,RMSE_USD,R2,MAPE_%
+A_Solo_Fisicas,Ridge,1,57212.68,146762.92,-0.0302,47.97
+A_Solo_Fisicas,Ridge,2,43780.26,65078.09,0.7212,26.19
+A_Solo_Fisicas,Ridge,3,42137.81,67502.26,0.7384,28.47
+A_Solo_Fisicas,Ridge,4,97945.47,469964.48,-3.256,34.88
+A_Solo_Fisicas,Ridge,5,65083.26,116146.94,0.5123,27.0
+A_Solo_Fisicas,Lasso,1,53226.4,84431.06,0.6591,52.4
+A_Solo_Fisicas,Lasso,2,45452.49,69122.11,0.6855,27.15
+A_Solo_Fisicas,Lasso,3,42436.45,66547.82,0.7458,29.49
+A_Solo_Fisicas,Lasso,4,70454.24,226020.62,0.0156,32.4
+A_Solo_Fisicas,Lasso,5,68264.7,115028.55,0.5217,27.47
+A_Solo_Fisicas,Random Forest,1,45879.62,68631.43,0.7747,45.16
+A_Solo_Fisicas,Random Forest,2,42430.91,64865.65,0.723,25.65
+A_Solo_Fisicas,Random Forest,3,41025.33,64738.52,0.7594,28.72
+A_Solo_Fisicas,Random Forest,4,61777.74,133089.16,0.6587,31.11
+A_Solo_Fisicas,Random Forest,5,60048.59,95803.66,0.6682,26.54
+A_Solo_Fisicas,Gradient Boosting,1,45953.25,91118.3,0.6029,43.49
+A_Solo_Fisicas,Gradient Boosting,2,41966.03,64488.22,0.7262,24.95
+A_Solo_Fisicas,Gradient Boosting,3,39775.97,62985.03,0.7722,27.86
+A_Solo_Fisicas,Gradient Boosting,4,60788.52,139874.15,0.623,30.02
+A_Solo_Fisicas,Gradient Boosting,5,58754.64,94166.58,0.6795,25.49
+A_Solo_Fisicas,XGBoost,1,44507.06,69120.74,0.7715,42.91
+A_Solo_Fisicas,XGBoost,2,40742.41,62638.7,0.7417,24.63
+A_Solo_Fisicas,XGBoost,3,38795.04,59311.39,0.798,27.3
+A_Solo_Fisicas,XGBoost,4,61755.65,150098.97,0.5659,30.06
+A_Solo_Fisicas,XGBoost,5,58060.68,92809.56,0.6886,25.53
+B_Fisicas_Criminalidad,Ridge,1,39717.34,90102.47,0.6117,27.95
+B_Fisicas_Criminalidad,Ridge,2,43954.32,70042.16,0.677,23.74
+B_Fisicas_Criminalidad,Ridge,3,32680.66,55229.63,0.8249,19.56
+B_Fisicas_Criminalidad,Ridge,4,87564.45,485442.53,-3.541,25.13
+B_Fisicas_Criminalidad,Ridge,5,48338.2,110073.31,0.562,21.53
+B_Fisicas_Criminalidad,Lasso,1,39968.67,66092.68,0.7911,34.75
+B_Fisicas_Criminalidad,Lasso,2,43316.31,72255.13,0.6563,22.92
+B_Fisicas_Criminalidad,Lasso,3,34185.18,56515.77,0.8166,21.05
+B_Fisicas_Criminalidad,Lasso,4,62145.21,253493.7,-0.2383,24.21
+B_Fisicas_Criminalidad,Lasso,5,51517.97,92879.05,0.6882,22.06
+B_Fisicas_Criminalidad,Random Forest,1,38025.84,61371.98,0.8199,28.98
+B_Fisicas_Criminalidad,Random Forest,2,42267.3,72752.06,0.6516,22.17
+B_Fisicas_Criminalidad,Random Forest,3,35449.43,57240.45,0.8119,23.07
+B_Fisicas_Criminalidad,Random Forest,4,53475.46,130227.76,0.6732,22.73
+B_Fisicas_Criminalidad,Random Forest,5,56246.43,89202.17,0.7124,25.68
+B_Fisicas_Criminalidad,Gradient Boosting,1,36695.01,64193.11,0.8029,26.55
+B_Fisicas_Criminalidad,Gradient Boosting,2,42562.12,76431.34,0.6154,20.93
+B_Fisicas_Criminalidad,Gradient Boosting,3,29826.29,49462.01,0.8595,18.87
+B_Fisicas_Criminalidad,Gradient Boosting,4,48806.05,124885.89,0.6995,20.76
+B_Fisicas_Criminalidad,Gradient Boosting,5,51218.87,84464.79,0.7421,21.8
+B_Fisicas_Criminalidad,XGBoost,1,34599.5,69631.61,0.7681,22.44
+B_Fisicas_Criminalidad,XGBoost,2,41836.94,72723.45,0.6518,21.61
+B_Fisicas_Criminalidad,XGBoost,3,33598.06,53110.94,0.8381,22.28
+B_Fisicas_Criminalidad,XGBoost,4,56536.29,158299.73,0.5171,22.27
+B_Fisicas_Criminalidad,XGBoost,5,50659.83,88986.73,0.7137,20.78
